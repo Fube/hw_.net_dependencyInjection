@@ -14,9 +14,12 @@ namespace DependencyInjection
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+
+        private IWebHostEnvironment _env;
+        public Startup(IWebHostEnvironment env)
         {
-            Configuration = configuration;
+            //Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -25,8 +28,15 @@ namespace DependencyInjection
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            //services.AddTransient<IProductService, AmazonProductService>();
-            services.AddTransient<IProductService, EbayProductService>();
+
+            if (_env.IsDevelopment())
+            {
+                services.AddTransient<IProductService, AmazonProductService>();
+            }
+            else
+            {
+                services.AddTransient<IProductService, EbayProductService>();
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
